@@ -1,0 +1,13 @@
+name: appGaussian2
+title:
+username:
+account: cranberrypredictionmodel
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6626972
+bundleId: 6167180
+url: https://cranberrypredictionmodel.shinyapps.io/appGaussian2/
+when: 1659648409.19104
+lastSyncTime: 1659648409.19106
+asMultiple: FALSE
+asStatic: FALSE
