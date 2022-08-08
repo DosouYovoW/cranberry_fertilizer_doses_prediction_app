@@ -5,7 +5,7 @@ shinyServer(
     
     shiny::observe({keep_alive()})
     # Download template data
-    dataUpload <- read_csv2("Fichier template app.csv")
+    dataUpload <- read_csv2("Data/Fichier template app.csv")
     
     output$downloadData <- downloadHandler(
       filename = function() {

@@ -1,73 +1,46 @@
 # I- Library loading----
 library(rsconnect)
-#install.packages("devtools")
-#library(devtools)
-#library(githubinstall)
-#install_github("trestletech/shinyStore")
-#library(shinyStore)
 library(xgboost)
 library(shiny)
 library(shinyFeedback)
 library(shinyjs)
 library(shinyWidgets)
-#library(colourpicker)
 library(shinydashboard)
 library(shinythemes)
 library(shinydisconnect)
 library(shinydashboardPlus)
-#library(fresh)
-#library(shinycssloaders)
 library(tidyverse)
 library(DT)
 library(caret)
 library(kernlab)
-#library(skimr)
-#library(plotly)
 library(tidymodels)
 library(keras)
 library(compositions)
-#library(ggThemeAssist)
 library(lubridate)
-#library(leaflet)
-#library(scales)
-#library(lattice)
-#library(viridis) # for color palette
-#library(htmltools)
-#library(rdrop2)
-#library(shinyjqui)
-# you just need to run this part once (no need included in shinyapp code)
-#drop_auth()
 
-# for remote use (deploy app to shinyapps.io or rstudio connect), you can save your auth to rds and load it to host platform
- #token <- drop_auth()
- #saveRDS(token, file = "token.rds")
- 
- # this part should be included in your shinyapp code
- #token <- readRDS("token.rds")
- #drop_acc(dtoken = token)
+# II- Data----
+## II-1- Import data-----
 
 # Get table metadata. For now, just the fields
 # Further development: also define field types
 # and create inputs generically
 
-  x <- data.frame(field_name = NA,
-                  N_fertilizer = NA,
-                  P_fertilizer = NA,
-                  K_fertilizer = NA,
-                  Mg_fertilizer = NA,
-                  S_fertilizer = NA,
-                  Ca_fertilizer = NA,
-                  Zn_fertilizer = NA,
-                  Cu_fertilizer = NA,
-                  B_fertilizer = NA,
-                  Mn_fertilizer = NA,
-                  Yield_curent_year = NA,
-                  Yield_next_year = NA)
+x <- data.frame(field_name = NA,
+                N_fertilizer = NA,
+                P_fertilizer = NA,
+                K_fertilizer = NA,
+                Mg_fertilizer = NA,
+                S_fertilizer = NA,
+                Ca_fertilizer = NA,
+                Zn_fertilizer = NA,
+                Cu_fertilizer = NA,
+                B_fertilizer = NA,
+                Mn_fertilizer = NA,
+                Yield_curent_year = NA,
+                Yield_next_year = NA)
 
-# II- Data----
-## II-1- Import data-----
- data2 <- readRDS("data_fol_sol_imp_app.rds")
-data <-  readRDS("data_merge.rds") |>
+ data2 <- readRDS("Data/data_fol_sol_imp_app.rds")
+data <-  readRDS("Data/data_merge.rds") |>
   mutate(frozen = as.numeric(frozen),
          sqrt_yield = sqrt(Rendement),
          Regie = if_else(Regie == "Organic", 0, 1),
@@ -87,7 +60,7 @@ gaussian_recipe <-
 
 sbp_soil <- read_csv2("Data/sbp_soil.csv")
 sbp_leaf <- read_csv2("Data/sbp_leaf.csv")
-source("ilr/ilrDefinition.R")
+source("Data/ilr/ilrDefinition.R")
 soil_bal_def <- ilrDefinition(sbp_soil,
                               side = "-+", sep.elem = "",
                               sep.bal = ".", sep.left = "", sep.right = ""
@@ -96,7 +69,7 @@ leaf_bal_def <- ilrDefinition(sbp_leaf,
                               side = "-+", sep.elem = "",
                               sep.bal = ".", sep.left = "", sep.right = ""
 )
-# Load models
+## II-2- Load models ----
   ## Laod Gaussian model
 model <- readRDS("gaussian_cranberry_model.rds")
 

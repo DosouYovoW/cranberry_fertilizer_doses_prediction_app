@@ -27,7 +27,7 @@ shinyUI(
                  selectInput("Soil_type", label = "Soil type", choices = c("Sand", "Organic"))#
           )
         ),
-        actionButton("all_data", label = "Update data", icon = icon("refresh")),
+        actionButton("all_data", label = "Update data", icon = icon("arrows-rotate")),
         menuItem(text = "Guideline", tabName = "guideline", icon = icon("book-open"))
       )
     ),
