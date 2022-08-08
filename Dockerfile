@@ -6,5 +6,6 @@ RUN apt-get update -qq \
   && install2.r --error --deps TRUE \
     shinyWidgets \
     shinythemes \
-    mongolite
+    mongolite \
+    xgboost
     
