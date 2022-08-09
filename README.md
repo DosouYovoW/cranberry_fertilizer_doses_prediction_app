@@ -1,2 +1,0 @@
-# cranberry_fertilizer_doses_prediction_app
-

@@ -8,7 +8,7 @@ shinyUI(
       sidebarMenu(
         shinyFeedback::useShinyFeedback(), # include shinyFeedback
         downloadBttn(
-          label = "Download template data",
+          label = "Download template",
           outputId = "downloadData",
           style = "bordered",
           color = "warning",
