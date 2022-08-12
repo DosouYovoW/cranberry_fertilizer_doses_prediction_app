@@ -1,7 +1,7 @@
 shinyUI(
   shinydashboard::dashboardPage(
     # III-1- Dashboard header----
-    shinydashboardPlus::dashboardHeader(title = tags$b("Cranberry fertilizers doses prediction"), titleWidth = 600,
+    shinydashboardPlus::dashboardHeader(title = tags$b("Cranberry fertilizers doses prediction"), titleWidth = 500,
                                         controlbarIcon = shiny::icon("gears")),
     # III-2- Dashboard Sidebar----
     shinydashboard::dashboardSidebar(
@@ -319,7 +319,7 @@ shinyUI(
                                               shinydashboard::box(numericInput("total_precip", label = "Seasonal total precipitation(mm)", value = round(mean(data$total_precip), 2))),
                                               shinydashboard::box(numericInput("frozen", label = "Seasonal number of freezing (< 5°C) days", value = round(mean(data$frozen), 0))),
                                               shinydashboard::box(numericInput("Age", label = "Field age (year)", value = round(mean(data$Age), 0))),
-                                              shinydashboard::box(numericInput("Purety", label = "Purety (%)",value = round(mean(data$Pureté), 2), step = .01))
+                                              shinydashboard::box(numericInput("Purety", label = "Purety",value = round(mean(data$Pureté), 2), step = .01))
                                        )
                                      )
                             )
