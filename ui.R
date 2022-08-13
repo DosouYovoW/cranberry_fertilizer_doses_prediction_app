@@ -2,11 +2,20 @@ shinyUI(
   shinydashboard::dashboardPage(
     # III-1- Dashboard header----
     shinydashboardPlus::dashboardHeader(title = tags$b("Cranberry fertilizers doses prediction"), titleWidth = 500,
-                                        controlbarIcon = shiny::icon("gears")),
+                                       dropdownMenu(type = 'message',
+                                                      headerText = "Send feedback",
+                                                            messageItem(
+                                                              from = "wilfrieddossouyovo16@gmail.com",
+                                                              message =  "",
+                                                              icon = icon("envelope"),
+                                                              href = "mailto:wilfrieddossouyovo16@gmail.com"
+                                                            )
+                                        ), 
+                                        controlbarIcon = NULL),
     # III-2- Dashboard Sidebar----
     shinydashboard::dashboardSidebar(
       sidebarMenu(
-        shinyFeedback::useShinyFeedback(), # include shinyFeedback
+        shinyFeedback::useShinyFeedback(),
         downloadBttn(
           label = "Download template",
           outputId = "downloadData",
@@ -28,7 +37,14 @@ shinyUI(
           )
         ),
         actionButton("all_data", label = "Update data", icon = icon("arrows-rotate")),
-        menuItem(text = "Guideline", tabName = "guideline", icon = icon("book-open"))
+        menuItem(text = "Guideline", tabName = "guideline", icon = icon("book-open")),
+        actionButton("github",
+                     label = "Code",
+                     icon = icon("github"),
+                     width = "80px",
+                     onclick ="window.open(`https://github.com/DosouYovoW/cranberry_fertilizer_doses_prediction_app`, '_blank')",
+                     style="color: #fff; background-color: #767676; border-color: #767676"
+        )
       )
     ),
     
