@@ -39,9 +39,9 @@ shinyUI(
         actionButton("all_data", label = "Update data", icon = icon("arrows-rotate")),
         menuItem(text = "Guideline", tabName = "guideline", icon = icon("book-open")),
         actionButton("github",
-                     label = "Code",
+                     label = "Code source",
                      icon = icon("github"),
-                     width = "80px",
+                     width = "110px",
                      onclick ="window.open(`https://github.com/DosouYovoW/cranberry_fertilizer_doses_prediction_app`, '_blank')",
                      style="color: #fff; background-color: #767676; border-color: #767676"
         )
