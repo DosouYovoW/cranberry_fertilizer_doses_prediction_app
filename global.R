@@ -4,9 +4,12 @@ library(xgboost)
 library(shiny)
 library(shinyFeedback)
 library(shinyjs)
+library(bsplus)
+library(htmltools)
 library(shinyWidgets)
 library(shinydashboard)
 library(shinythemes)
+library(shinycssloaders)
 #library(shinydisconnect)
 library(shinydashboardPlus)
 library(tidyverse)
@@ -18,6 +21,13 @@ library(keras)
 library(compositions)
 library(lubridate)
 
+new_productive <- c("crimson queen", "demoranville", "haines",
+                    "hyred", "welker", "mullica queen",
+                    "sundance", "scarlett knight")
+old <- c("ben larocque", "ben lear", "ben-pil-35", "bergman",
+         "gardner", "pilgrim", "howes", "wilcox")
+stevens_grygleski_gh1 <- c("stevens", "grygleski", "gh1")
+
 # II- Data----
 ## II-1- Import data-----
 
@@ -26,6 +36,7 @@ library(lubridate)
 # and create inputs generically
 
 x <- data.frame(field_name = NA,
+                Regie = NA,
                 N_fertilizer = NA,
                 P_fertilizer = NA,
                 K_fertilizer = NA,
@@ -37,15 +48,33 @@ x <- data.frame(field_name = NA,
                 B_fertilizer = NA,
                 Mn_fertilizer = NA,
                 Yield_curent_year = NA,
-                Yield_next_year = NA)
+                Yield_next_year = NA,
+                comment = NA) |>
+  rename(`Field name` = field_name,
+         `N fertilizer` = N_fertilizer,
+         `P fertilizer` = P_fertilizer,
+         `K fertilizer` = K_fertilizer,
+         `Mg fertilizer` = Mg_fertilizer,
+         `S fertilizer` = S_fertilizer,
+         `Ca fertilizer` = Ca_fertilizer,
+         `Zn fertilizer` = Zn_fertilizer,
+         `Cu fertilizer` = Cu_fertilizer,
+         `B fertilizer` = B_fertilizer,
+         `Mn fertilizer` = Mn_fertilizer,
+         `Yield current year` = Yield_curent_year,
+         `Yield next year` = Yield_next_year,
+         Comment = comment)
 
  data2 <- readRDS("Data/data_fol_sol_imp_app.rds")
 data <-  readRDS("Data/data_merge.rds") |>
   mutate(frozen = as.numeric(frozen),
          sqrt_yield = sqrt(Rendement),
          Regie = if_else(Regie == "Organic", 0, 1),
+         Variete = case_when(Variete == "stevens_grygleski_gh1" ~ 1,
+                             Variete == "old" ~ 2,
+                             Variete == "new_productive" ~ 3),
          Soil_type = if_else(Soil_type == "Sand", 0, 1)) |>
-  select(-Rendement, -Annee) 
+  select(-Rendement, -Annee, -mean_temp) 
 
 set.seed(1765)
 data_split <- initial_split(data, strata = "sqrt_yield")

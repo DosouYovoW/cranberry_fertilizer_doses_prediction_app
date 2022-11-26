@@ -1,0 +1,14 @@
+name: appCranberry
+title: appCranberry
+username:
+account: appferticanneberge
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6883918
+bundleId: 6342956
+url: https://appferticanneberge.shinyapps.io/appCranberry/
+when: 1664281775.4526
+lastSyncTime: 1664281775.45262
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Dockerfile|guide app.Rmd

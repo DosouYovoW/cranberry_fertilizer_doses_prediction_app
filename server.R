@@ -34,7 +34,7 @@ shinyServer(
         dplyr::rename(Regie = regie,
                       #id = unique_id,
                       Soil_type = `type de sol`,
-                      mean_temp = `temp moy saisonale`,
+                      #mean_temp = `temp moy saisonale`,
                       total_precip = `precip total saisonale`,
                       frozen = `nbr de jour de gel saisonale`,
                       PhEau = phEau,
@@ -50,7 +50,11 @@ shinyServer(
                       Mg_Fert = `Mg_Fert (lbs/ac)`,
                       S_Fert = `S_Fert (lbs/ac)`,
                       Mn_Fert = `Mn_Fert (lbs/ac)`) |>
-        dplyr::mutate(Regie = str_replace_all(Regie, 
+        dplyr::mutate(Variete = tolower(Variete), 
+          Variete = case_when(Variete %in% new_productive ~  "new_productive",
+                                                    Variete %in% old ~ "old",
+                                                    Variete %in% stevens_grygleski_gh1 ~ "stevens_grygleski_gh1"), 
+          Regie = str_replace_all(Regie, 
                                               c("biologique" = "Organic", "conventionnelle" = "Conventional")),
                       Soil_type = str_replace_all(Soil_type, 
                                                   c("sable" = "Sand", "organique" = "Organic"))) |>
@@ -147,15 +151,17 @@ shinyServer(
       update_fn("Mn_Fol_percent", filterData$`Mn_Fol (%)`)
       update_fn("Zn_Fol_percent", filterData$`Zn_Fol (%)`)
       update_fn("Al_Fol_percent", filterData$`Al_Fol (%)`)
-      update_fn("mean_temp", filterData$mean_temp)
+      #update_fn("mean_temp", filterData$mean_temp)
       update_fn("total_precip", filterData$total_precip)
       update_fn("frozen", filterData$frozen)
       update_fn("PhEau", filterData$PhEau)
       update_fn("Age", filterData$Age)
       update_fn("Purety", filterData$Purete)
       updateTextInput(session, "name_field", value = filterData$`id champs`)
+      updateTextInput(session, "yield_last_year", value = filterData$`rendement annee precedante`)
       updateSelectInput(session, "Regie", choices = filterData$Regie)
       updateSelectInput(session, "Soil_type", choices = filterData$Soil_type)
+      updateSelectInput(session, "Variete", choices = filterData$Variete)
     })
     
     ## Update each fertilizer ------
@@ -330,7 +336,7 @@ shinyServer(
       #Validate output error-----
         validate(need(input$Purety != "", "Purety: missing value, please check app guideline"))
         validate(need(input$frozen != "", "number of freezing day: missing value, please check app guideline")) 
-        validate(need(input$mean_temp != "", "mean temperature: missing value, please check app guideline")) 
+        #validate(need(input$mean_temp != "", "mean temperature: missing value, please check app guideline")) 
         validate(need(input$total_precip != "", "total precipitation: missing value, please check app guideline")) 
         validate(need(input$Age != "", "Age: missing value, please check app guideline")) 
         validate(need(input$PhEau != "", "pH: missing value, please check app guideline")) 
@@ -350,9 +356,12 @@ shinyServer(
         if(!(input$Soil_type %in% c("Sand", "Organic"))){
           validate("Soil type: missing value, please check app guideline") 
         }
+        if(!(input$Variete %in% c("stevens_grygleski_gh1", "old", "new_productive"))){
+          validate("variety: missing value, please check app guideline") 
+        }
       
       dt <- tibble(
-        "mean_temp" = input$mean_temp,
+        #"mean_temp" = input$mean_temp,
         "total_precip" = input$total_precip,
         "frozen" = input$frozen,
         "Pureté" = input$Purety,
@@ -389,6 +398,9 @@ shinyServer(
         "soil_CuMg.Ca" = Box1[8],
         "soil_CuMgCa.KP" = Box1[9],
         "soil_K.P" = Box1[10],
+        "Variete" = case_when(input$Variete == "stevens_grygleski_gh1" ~ 1,
+                              input$Variete == "old" ~ 2,
+                              input$Variete == "new_productive" ~ 3),
         "Regie" = if_else(input$Regie == "Organic", 0, 1),
         "Soil_type" = if_else(input$Soil_type == "Sand", 0, 1)
       )
@@ -404,6 +416,7 @@ shinyServer(
     
     output$Yield_prediction <- renderValueBox({
       pred <- pred()
+      Sys.sleep(0.01)
       valueBox(
         value =   round(pred^2, 0), 
         subtitle = paste0(format(as_date(now()), "%Y"), "\n", "Predicted", "\n",  
@@ -430,7 +443,7 @@ shinyServer(
       )
       
       conditional_features <- data_to_predict |>
-        select(mean_temp, frozen, PhEau, total_precip, Regie, `Pureté`, Age,
+        select(frozen, PhEau, total_precip, Regie, Variete, `Pureté`, Age,
                starts_with(c("Leaf_", "soil_")),  Soil_type)|>
         names()
       conditional_features <- c(conditional_features,features_if)
@@ -626,6 +639,7 @@ shinyServer(
     
     
     output$next_year_Yield_prediction <- renderValueBox({
+      Sys.sleep(0.01)
       valueBox(
         value = round(pred_next()^2, 0), 
         subtitle = paste0( format(as_date(now()) %m+% years(1), "%Y"), "\n", "Predicted", 
@@ -639,7 +653,8 @@ shinyServer(
     values$df <- x
     observeEvent(input$add.button,{
       cat("addEntry\n")
-      print(input$name_field)
+      print(input$name_field) # Afficher le rendement de l'année préceédante
+      print(input$Regie)
       print(input$N_fertilizer)
       print(input$P_fertilizer)
       print(input$K_fertilizer)
@@ -652,7 +667,9 @@ shinyServer(
       print(input$Mn_fertilizer)
       print(round(pred()^2, 0))
       print(round(pred_next()^2, 0))
+      print(input$comment)
       newRow <- data.frame(input$name_field,
+                           input$Regie,
                            input$N_fertilizer,
                            input$P_fertilizer,
                            input$K_fertilizer,
@@ -664,7 +681,8 @@ shinyServer(
                            input$B_fertilizer,
                            input$Mn_fertilizer,
                            round(pred()^2, 0),
-                           round(pred_next()^2, 0))
+                           round(pred_next()^2, 0),
+                           input$comment)
       colnames(newRow)<-colnames(values$df)
       values$df <- rbind(values$df,newRow)
       print(nrow(values$df))
@@ -697,10 +715,10 @@ shinyServer(
       show_alert(title = "Saved",
                  type = "success")
     })
-    observeEvent(input$reset, {
-      show_alert(title = "Reset",
-                 type = "success")
-    })  
+    #observeEvent(input$reset, {
+    #  show_alert(title = "Reset",
+   #              type = "success")
+   # })  
     
     # Feedbacks-------
     feedback_fn <- function(Id, Input, value){
