@@ -410,7 +410,7 @@ shinyServer(
     pred <- reactive({
       data_to_predict <- data_to_predict()
       pred <- stats::predict(
-        model, bake(gaussian_recipe, data_to_predict)
+        model, bake(gaussian_recipe, data_to_predict())
       )
     })
     
@@ -453,7 +453,7 @@ shinyServer(
         names()
       managed_features <- managed_features[!(managed_features %in% features_if)]
       
-      observation <- bake(gaussian_recipe, data_to_predict)
+      observation <- bake(gaussian_recipe, data_to_predict())
       obs_managed <- observation |> select(all_of(managed_features))
       obs_conditions <- observation |> select(all_of(conditional_features))
       
