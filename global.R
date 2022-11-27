@@ -13,6 +13,7 @@ library(shinycssloaders)
 #library(shinydisconnect)
 library(shinydashboardPlus)
 library(tidyverse)
+library(bundle)
 library(DT)
 library(caret)
 library(kernlab)
@@ -74,7 +75,7 @@ data <-  readRDS("Data/data_merge.rds") |>
                              Variete == "old" ~ 2,
                              Variete == "new_productive" ~ 3),
          Soil_type = if_else(Soil_type == "Sand", 0, 1)) |>
-  select(-Rendement, -Annee, -mean_temp) 
+  select(-ID, -Rendement, -Annee, -mean_temp) 
 
 set.seed(1765)
 data_split <- initial_split(data, strata = "sqrt_yield")
@@ -103,65 +104,68 @@ leaf_bal_def <- ilrDefinition(sbp_leaf,
 model <- readRDS("gaussian_cranberry_model.rds")
 
   ## Next year xgboost models
-model_Leaf_Fv_vs_AlZnMnFeCuBMgCaKPN_next <- 
-  readRDS("next_year_list_xgboost/Model_Leaf_Fv.AlZnMnFeCuBMgCaKPN_next.rds")
+#mod_bundle <- readRDS("next_year_list_xgboost/Model_soil_K.P2_next.rds")
+#mod_new <- unbundle(mod_bundle)
+
+model_Leaf_Fv_vs_AlZnMnFeCuBMgCaKPN <- 
+  readRDS("next_year_list_xgboost/Model_Leaf_Fv.AlZnMnFeCuBMgCaKPN_next.rds") |> unbundle()
 
 model_Leaf_Al_vs_ZnMnFeCuBMgCaKPN <- 
-  readRDS("next_year_list_xgboost/Model_Leaf_Al.ZnMnFeCuBMgCaKPN_next.rds")
+  readRDS("next_year_list_xgboost/Model_Leaf_Al.ZnMnFeCuBMgCaKPN_next.rds") |> unbundle()
 
 model_Leaf_Mn_vs_Fe <- 
-  readRDS("next_year_list_xgboost/Model_Leaf_Mn.Fe_next.rds")
+  readRDS("next_year_list_xgboost/Model_Leaf_Mn.Fe_next.rds") |> unbundle()
 
 model_Leaf_ZnCuBMgCaKPN_vs_MnFe <- 
-  readRDS("next_year_list_xgboost/Model_Leaf_ZnCuBMgCaKPN.MnFe_next.rds")
+  readRDS("next_year_list_xgboost/Model_Leaf_ZnCuBMgCaKPN.MnFe_next.rds") |> unbundle()
 
 model_Leaf_Cu_vs_Zn <- 
-  readRDS("next_year_list_xgboost/Model_Leaf_Cu.Zn_next.rds")
+  readRDS("next_year_list_xgboost/Model_Leaf_Cu.Zn_next.rds") |> unbundle()
 
 model_Leaf_B_vs_ZnCu <- 
-  readRDS("next_year_list_xgboost/Model_Leaf_B.ZnCu_next.rds")
+  readRDS("next_year_list_xgboost/Model_Leaf_B.ZnCu_next.rds") |> unbundle()
 
 model_Leaf_MgCaKPN_vs_ZnCuB <- 
-  readRDS("next_year_list_xgboost/Model_Leaf_MgCaKPN.ZnCuB_next.rds")
+  readRDS("next_year_list_xgboost/Model_Leaf_MgCaKPN.ZnCuB_next.rds") |> unbundle()
 
 model_Leaf_Ca_vs_Mg <- 
-  readRDS("next_year_list_xgboost/Model_Leaf_Ca.Mg_next.rds")
+  readRDS("next_year_list_xgboost/Model_Leaf_Ca.Mg_next.rds") |> unbundle()
 
 model_Leaf_K_vs_MgCa <- 
-  readRDS("next_year_list_xgboost/Model_Leaf_K.MgCa_next.rds")
+  readRDS("next_year_list_xgboost/Model_Leaf_K.MgCa_next.rds") |> unbundle()
 
 model_Leaf_PN_vs_MgCaK <- 
-  readRDS("next_year_list_xgboost/Model_Leaf_PN.MgCaK_next.rds")
+  readRDS("next_year_list_xgboost/Model_Leaf_PN.MgCaK_next.rds") |> unbundle()
 
 model_Leaf_P_vs_N <- 
-  readRDS("next_year_list_xgboost/Model_Leaf_P.N_next.rds")
+  readRDS("next_year_list_xgboost/Model_Leaf_P.N_next.rds") |> unbundle()
 
 model_soil_Fv_vs_FeBMnCuZnMgKAlPCa <- 
-  readRDS("next_year_list_xgboost/Model_soil_Fv.FeBMnCuZnMgKAlPCa_next.rds")
+  readRDS("next_year_list_xgboost/Model_soil_Fv.FeBMnCuZnMgKAlPCa_next.rds") |> unbundle()
 
 model_soil_Fe_vs_Al <- 
-  readRDS("next_year_list_xgboost/Model_soil_Fe.Al_next.rds")
+  readRDS("next_year_list_xgboost/Model_soil_Fe.Al_next.rds") |> unbundle()
 
 model_soil_FeAl_vs_BMnCuZnMgKPCa <- 
-  readRDS("next_year_list_xgboost/Model_soil_FeAl.BMnCuZnMgKPCa_next_next.rds")
+  readRDS("next_year_list_xgboost/Model_soil_FeAl.BMnCuZnMgKPCa_next_next.rds") |> unbundle()
 
 model_soil_Mn_vs_B_next <- 
-  readRDS("next_year_list_xgboost/Model_soil_Mn.B_next_next.rds")
+  readRDS("next_year_list_xgboost/Model_soil_Mn.B_next_next.rds") |> unbundle()
 
 model_soil_BMn_vs_Zn_next <- 
-  readRDS("next_year_list_xgboost/Model_soil_BMn.Zn_next.rds")
+  readRDS("next_year_list_xgboost/Model_soil_BMn.Zn_next.rds") |> unbundle()
 
 model_soil_BMnZn_vs_CuMgKPCa_next <- 
-  readRDS("next_year_list_xgboost/Model_soil_BMnZn.CuMgKPCa_next.rds")
+  readRDS("next_year_list_xgboost/Model_soil_BMnZn.CuMgKPCa_next.rds") |> unbundle()
 
 model_soil_Cu_vs_Mg_next <- 
-  readRDS("next_year_list_xgboost/Model_soil_Cu.Mg_next.rds")
+  readRDS("next_year_list_xgboost/Model_soil_Cu.Mg_next.rds") |> unbundle()
 
 model_soil_CuMg_vs_Ca_next <- 
-  readRDS("next_year_list_xgboost/Model_soil_CuMg.Ca_next.rds")
+  readRDS("next_year_list_xgboost/Model_soil_CuMg.Ca_next.rds") |> unbundle()
 
 model_soil_CuMgCa_vs_KP_next <- 
-  readRDS("next_year_list_xgboost/Model_soil_CuMgCa.KP_next.rds")
+  readRDS("next_year_list_xgboost/Model_soil_CuMgCa.KP_next.rds") |> unbundle()
 
 model_soil_K_vs_P_next <- 
-  readRDS("next_year_list_xgboost/Model_soil_K.P_next.rds")
+  readRDS("next_year_list_xgboost/Model_soil_K.P_next.rds") |> unbundle()

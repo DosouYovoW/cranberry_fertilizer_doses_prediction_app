@@ -410,7 +410,7 @@ shinyServer(
     pred <- reactive({
       data_to_predict <- data_to_predict()
       pred <- stats::predict(
-        model, bake(gaussian_recipe, data_to_predict())
+        model, bake(gaussian_recipe, data_to_predict)
       )
     })
     
@@ -529,54 +529,54 @@ shinyServer(
       data_to_predict <- data_to_predict() |> 
         mutate(Rendement = round(pred^2, 0))
       
-      data_to_predict_next <- data_to_predict |>
+      data_next <- data_to_predict() |>
         mutate(
           "Age" = 1+input$Age,
           
-          "Leaf_Fv.AlZnMnFeCuBMgCaKPN" = stats::predict(model_Leaf_Fv_vs_AlZnMnFeCuBMgCaKPN_next,
-                                                        data_to_predict), 
-          "Leaf_Al.ZnMnFeCuBMgCaKPN" = stats::predict(model_Leaf_Al_vs_ZnMnFeCuBMgCaKPN, 
-                                                      data_to_predict), 
-          "Leaf_Mn.Fe" = stats::predict(model_Leaf_Mn_vs_Fe, 
-                                        data_to_predict), 
-          "Leaf_ZnCuBMgCaKPN.MnFe" = stats::predict(model_Leaf_ZnCuBMgCaKPN_vs_MnFe, 
-                                                    data_to_predict), 
-          "Leaf_Cu.Zn" = stats::predict(model_Leaf_Cu_vs_Zn, 
-                                        data_to_predict), 
-          "Leaf_B.ZnCu" = stats::predict(model_Leaf_B_vs_ZnCu, 
-                                         data_to_predict), 
-          "Leaf_MgCaKPN.ZnCuB" = stats::predict(model_Leaf_MgCaKPN_vs_ZnCuB, 
-                                                data_to_predict), 
-          "Leaf_Ca.Mg" = stats::predict(model_Leaf_Ca_vs_Mg, 
-                                        data_to_predict), 
-          "Leaf_K.MgCa" = stats::predict(model_Leaf_K_vs_MgCa, 
-                                         data_to_predict), 
-          "Leaf_PN.MgCaK" = stats::predict(model_Leaf_PN_vs_MgCaK, 
-                                           data_to_predict), 
-          "Leaf_P.N" = stats::predict(model_Leaf_P_vs_N, 
-                                      data_to_predict), 
-          "soil_Fv.FeBMnCuZnMgKAlPCa" = stats::predict(model_soil_Fv_vs_FeBMnCuZnMgKAlPCa, 
-                                                       data_to_predict), 
-          "soil_Fe.Al" = stats::predict(model_soil_Fe_vs_Al, 
-                                        data_to_predict), 
-          "soil_FeAl.BMnCuZnMgKPCa" = stats::predict(model_soil_FeAl_vs_BMnCuZnMgKPCa, 
-                                                     data_to_predict), 
-          "soil_Mn.B" = stats::predict(model_soil_Mn_vs_B_next, 
-                                       data_to_predict), 
-          "soil_BMn.Zn" = stats::predict(model_soil_BMn_vs_Zn_next, 
-                                         data_to_predict), 
-          "soil_BMnZn.CuMgKPCa" = stats::predict(model_soil_BMnZn_vs_CuMgKPCa_next, 
-                                                 data_to_predict), 
-          "soil_Cu.Mg" = stats::predict(model_soil_Cu_vs_Mg_next, 
-                                        data_to_predict), 
-          "soil_CuMg.Ca" = stats::predict(model_soil_CuMg_vs_Ca_next, 
-                                          data_to_predict), 
-          "soil_CuMgCa.KP" = stats::predict(model_soil_CuMgCa_vs_KP_next, 
-                                            data_to_predict), 
-          "soil_K.P" = stats::predict(model_soil_K_vs_P_next, 
-                                      data_to_predict) 
+          "Leaf_Fv.AlZnMnFeCuBMgCaKPN" = as.numeric(stats::predict(model_Leaf_Fv_vs_AlZnMnFeCuBMgCaKPN,
+                                                        data_to_predict)), 
+          "Leaf_Al.ZnMnFeCuBMgCaKPN" = as.numeric(stats::predict(model_Leaf_Al_vs_ZnMnFeCuBMgCaKPN, 
+                                                      data_to_predict)), 
+          "Leaf_Mn.Fe" = as.numeric(stats::predict(model_Leaf_Mn_vs_Fe, 
+                                        data_to_predict)), 
+          "Leaf_ZnCuBMgCaKPN.MnFe" = as.numeric(stats::predict(model_Leaf_ZnCuBMgCaKPN_vs_MnFe, 
+                                                    data_to_predict)), 
+          "Leaf_Cu.Zn" = as.numeric(stats::predict(model_Leaf_Cu_vs_Zn, 
+                                        data_to_predict)), 
+          "Leaf_B.ZnCu" = as.numeric(stats::predict(model_Leaf_B_vs_ZnCu, 
+                                         data_to_predict)), 
+          "Leaf_MgCaKPN.ZnCuB" = as.numeric(stats::predict(model_Leaf_MgCaKPN_vs_ZnCuB, 
+                                                data_to_predict)), 
+          "Leaf_Ca.Mg" = as.numeric(stats::predict(model_Leaf_Ca_vs_Mg, 
+                                        data_to_predict)), 
+          "Leaf_K.MgCa" = as.numeric(stats::predict(model_Leaf_K_vs_MgCa, 
+                                         data_to_predict)), 
+          "Leaf_PN.MgCaK" = as.numeric(stats::predict(model_Leaf_PN_vs_MgCaK, 
+                                           data_to_predict)), 
+          "Leaf_P.N" = as.numeric(stats::predict(model_Leaf_P_vs_N, 
+                                      data_to_predict)), 
+          "soil_Fv.FeBMnCuZnMgKAlPCa" = as.numeric(stats::predict(model_soil_Fv_vs_FeBMnCuZnMgKAlPCa, 
+                                                       data_to_predict)), 
+          "soil_Fe.Al" = as.numeric(stats::predict(model_soil_Fe_vs_Al, 
+                                        data_to_predict)), 
+          "soil_FeAl.BMnCuZnMgKPCa" = as.numeric(stats::predict(model_soil_FeAl_vs_BMnCuZnMgKPCa, 
+                                                     data_to_predict)), 
+          "soil_Mn.B" = as.numeric(stats::predict(model_soil_Mn_vs_B_next, 
+                                       data_to_predict)), 
+          "soil_BMn.Zn" = as.numeric(stats::predict(model_soil_BMn_vs_Zn_next, 
+                                         data_to_predict)), 
+          "soil_BMnZn.CuMgKPCa" = as.numeric(stats::predict(model_soil_BMnZn_vs_CuMgKPCa_next, 
+                                                 data_to_predict)), 
+          "soil_Cu.Mg" = as.numeric(stats::predict(model_soil_Cu_vs_Mg_next, 
+                                        data_to_predict)), 
+          "soil_CuMg.Ca" = as.numeric(stats::predict(model_soil_CuMg_vs_Ca_next, 
+                                          data_to_predict)), 
+          "soil_CuMgCa.KP" = as.numeric(stats::predict(model_soil_CuMgCa_vs_KP_next, 
+                                            data_to_predict)), 
+          "soil_K.P" = as.numeric(stats::predict(model_soil_K_vs_P_next, 
+                                      data_to_predict)) 
         )
-      return(data_to_predict_next)
+      return(data_next)
     }) 
     
     # next year Leaf balance value box-----
@@ -593,7 +593,7 @@ shinyServer(
       })
     }
     
-    output$box_leaf_next1 <- leaf_box_fn_next(1, model_Leaf_Fv_vs_AlZnMnFeCuBMgCaKPN_next)
+    output$box_leaf_next1 <- leaf_box_fn_next(1, model_Leaf_Fv_vs_AlZnMnFeCuBMgCaKPN)
     output$box_leaf_next2 <- leaf_box_fn_next(2, model_Leaf_Al_vs_ZnMnFeCuBMgCaKPN)
     output$box_leaf_next3 <- leaf_box_fn_next(3, model_Leaf_Mn_vs_Fe)
     output$box_leaf_next4 <- leaf_box_fn_next(4, model_Leaf_ZnCuBMgCaKPN_vs_MnFe)
@@ -630,13 +630,18 @@ shinyServer(
     output$box_next9 <- soil_box_fn_next(9, model_soil_CuMgCa_vs_KP_next)
     output$box_next10 <- soil_box_fn_next(10, model_soil_K_vs_P_next)
     
-    
+ #   pred <- reactive({
+  #    data_to_predict <- data_to_predict()
+   #   pred <- stats::predict(
+    #    model, bake(gaussian_recipe, data_to_predict)
+     # )
+    #})
     pred_next <- reactive({
+      data_to_predict_next <- data_to_predict_next()
       stats::predict(
-        model, bake(gaussian_recipe, data_to_predict_next())
+        model, bake(gaussian_recipe, data_to_predict_next)#data_test[1,])#data_to_predict_next)
       )
     })
-    
     
     output$next_year_Yield_prediction <- renderValueBox({
       Sys.sleep(0.01)
