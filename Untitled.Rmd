@@ -5,13 +5,34 @@ output:
   pdf_document: default
 ---
 
+```{r}
+# Load the ggplot2 package
+library(ggplot2)
+library(scales)
+
+# Create a sample ggplot2 plot with two legends
+ggplot(data = mtcars, aes(x = wt, y = mpg, color = cyl, size = hp)) +
+  geom_point() +
+  labs(title = "Mileage vs. Weight", x = "Weight (lbs/1000)", y = "Mileage (mpg)")
+
+# Remove the color legend by specifying the guide argument
+ggplot(data = mtcars, aes(x = wt, y = mpg, color = cyl, size = hp)) +
+  geom_point() +
+  labs(title = "Mileage vs. Weight", x = "Weight (lbs/1000)", y = "Mileage (mpg)")+
+  scale_x_continuous(labels = scales::dollar()) +
+  guides(color = FALSE)
+
+```
+
 
 ```{r}
+library(tidyverse)
 library(ggpmisc)
+library(ggthemes)
 #set.seed(21318)
 #df <- data.frame(x = c(1:100))
 #df$y <- 2 + 3*df$x + rnorm(100, sd = 40)
-
+iris
 formula1 <- y ~ poly(x, 2)
 df <- iris |>
   rename(x=Sepal.Length, 
@@ -31,7 +52,8 @@ ggplot(data = df, aes(x = x, y = y)) +
   stat_poly_eq(aes(label = paste0("atop(", ..eq.label.., ",", ..rr.label.., ")")), 
                formula = formula1, 
                parse = TRUE) +
-  theme_bw(base_size = 16)
+  ggthemes::theme
+  #theme_bw(base_size = 16)
 ```
 
 ```{r}
