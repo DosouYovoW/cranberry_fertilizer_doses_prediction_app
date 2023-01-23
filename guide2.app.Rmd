@@ -1,0 +1,175 @@
+---
+title: "Guide d'utilisateur app"
+author: "Wilfried Dossou-Yovo"
+date: '2022-08-10'
+output:
+  pdf_document: 
+    toc: yes
+  html_document: 
+    toc: yes
+    number_sections: yes
+---
+
+# Étapes
+1.	Télécharger le `template`
+2.	Remplir le `template` avec les données des champs
+3.	Uploader le `template` rempli dans l’application
+4.	Choisir un id dans `Choose field id` et Cliquer sur `update data`
+5.	Cliquer `optimize yield 2022`, ensuite contrôler chaque fertilisant avec les boutons ex : `update N fertilizer` ou le panel `Optimizer control`   
+6.	Cliquer sur `save predictions` pour enregistrer les prédictions
+7.	Télécharger les prédictions dans l’onglet `Saved predictions`
+8.	Utiliser le bouton `reset` dans la section `Optimizer control` pour réinitialiser les paramètres et choisir un autre champ par le filtre `Choose field id` 
+
+# Utilisation du template
+Le `Template` est un fichier csv à séparateur décimal `,`  `ex: 0,01`  et séparateur de colonne `;`
+
+1.	id : `id` est l’identifiant unique pour le choix des champs, ne peut pas contenir de répétitions, idéalement `1, 2, 3, …., n`
+2.	id champs : Le nom du champ
+3.	regie : **biologique** ou **conventionnelle**
+4.	type de sol :**organique** ou **sable**  
+5. Variete    
+Les variétés sont regroupées en trois groupes:   
+    New_productive: `crimson queen , demoranville, haines, hyred, welker, mullica queen, sundance, scarlett knight`  
+    old: `Ben larocque, Ben lear, BEN-Pil-35, Bergman, Gardner, pilgrim, howes, wilcox`  
+    stevens_grygleski_gh1: `stevens et grygleski et gh1`    
+    Dans le fichier template, il faut juste mettre le nom de la variété. 
+    Exemple: **Stevens**, **Ben lear**
+    
+    
+
+-	Indices climatiques du 01 mai au 31 octobre: Données recueillies sur [environnement canada.](https://meteo.gc.ca/mainmenu/weather_menu_f.html) 
+Station LEMIEUX altitude 97,20 m  
+Station NORMANDIN altitude 137,20 m  
+Station SAINT-GERMAIN-DE-GRANTHAM altitude 85 m  
+Station L'ASSOMPTION altitude 21 m  
+Station SHAWINIGAN altitude 121,90 m  
+Station GAGETOWN AWOS A altitude 50,60 m  
+Station THUNDER BAY CS altitude 199,40 m  
+6.	precip total saisonale: precipitation totale  de la saison en mm
+7.	nbr de jour de gel saisonale : nombre de jour où la température minimale est inférieur à 5 degrée °C 
+
+- Analyse de sol
+Les analyses du sol effectuées au primptemp de l'année de prédiction. elles sont en partie par million (ppm)
+
+- Analyse foliaire
+les analyses foliaires effectuées à l'automne précédant l'année de prédiction. Elles sont en pourcentage (%)
+
+- Fertilisation
+Les fertilisations sont celles de l'année de prédiction. Elles sont en livre à l'acre (lbs/ac)
+
+- Autres données
+8.	purete: valeur décimale comprise entre 0 – 1,
+9. Age (annee): l'age du champs au moment de la prédiction.   
+    Formule: `Age = Année de prédiction - année d'implantation du champs`
+10. pHeau : pH à l'eau déterminé au prinptemp de l'année de prédiction.  
+11. rendement annee precedante: cette variable est facultative, le but est d'afficher le rendement de l'année précédante afin de mieux fertiliser le champs de l'année en cours
+
+**Quelques précisions:**   
+1- Ne pas modifier les noms des colonnes dans le template, l'algorithme s'attend à recevoir ces noms de colonne.
+
+2- Dans l’estimation du rendement de la récolte de 2021, `l’année de pédiction` représente les données de 2021 et `l’année précédente` représente les données de l'année 2020   
+
+3- Pour obtenir le `rendement de l'année suivante`, les balances (Sols et foliaires) de l'année suivante ont d'abord été prédites sur la base des données de `l'année de prédiction`(Année en cours). Ensuites ces balances sont utilisées comme variables encomplémentarité avec les indices climatiques et la fertilisation `identique à l’année de prédiction` (c’est-à-dire, comme si on refaisait la même fertilisation deux années de suite et dans les mêmes conditions climatiques).  
+
+# Quelques conversions
+ 1 kg/ha = 1 x 2,24 ppm  
+ 1 ppm = 1/10 000 %
+
+# Statistique descriptive du jeu de donnée
+## Sommaire
+Ce sommaire donne une idée sur la distribution des données notamment les analyses de sols et foliaires. L'algorithme ne s'attend pas à des valeurs hors context. Par exemple pour l'analyse foliaire en azote, le jeu de donnée présente une valeur minimale de 0,01 et un maximum de 7,8. Si vous rentrez une valeur de 40 cela pourrait empecher l'optimisation. De la meme façon s'il y a trop de `zéro(0)` apres le décimal par rapport a la normale d'une variable `ex pour l'azote foliaire, N_fol(%) = 0,00001`, cela pourrait aussi empecher l'optimisation. Si vous remarquez que l'optimisation ne réagie pas, cela pourrait signifier qu'il y a une variable qui a été mal rentrée. Notons qu'une valeur peut sembler anormale par rapport à la distribution des données `mais cela ne veut pas necessairement dire que c'une valeur aberrante`
+
+### Boxplot analyse foliaire (%) année précédante
+Pour comprendre l'interprétation d'un boxplot, [cliquez ici](https://www.stat4decision.com/fr/le-box-plot-ou-la-fameuse-boite-a-moustache/)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(plotly)
+data <- readRDS("Data/data_fol_sol_imp_app.rds")
+```
+
+```{r echo=FALSE}
+#ggplotly(
+  data |>
+    pivot_longer(cols = contains("Fol"), names_to = "Fol", values_to = "Donnee_Fol") |>
+    ggplot(aes(x = Fol, y = Donnee_Fol)) +
+    geom_boxplot() +
+    labs(x = NULL, y = "Valeur") +
+    theme_bw() +
+    theme(axis.text.x = element_text(vjust = 0.5,
+                                     angle = 50))
+#)
+
+```
+
+### Boxplot analyse de sol (ppm) de l'année courante
+
+```{r echo=FALSE}
+#ggplotly(
+  data |>
+    pivot_longer(cols = contains("sol"), names_to = "Sol", values_to = "Donnee_Sol") |>
+    ggplot(aes(x = Sol, y = Donnee_Sol)) +
+    geom_boxplot() +
+    labs(x = NULL, y = "Valeur") +
+    theme_bw() +
+    theme(axis.text.x = element_text(vjust = 0.5,
+                                     angle = 50))
+#)
+```
+
+### Histogrammes
+#### Analyse foliaire en pourcentage
+Pour comprendre l'interprétation un histogramme, [cliquez ici](https://support.minitab.com/fr-fr/minitab/20/help-and-how-to/graphs/histogram/interpret-the-results/key-results/#step-1-assess-the-key-characteristics)
+```{r echo=FALSE}
+library(patchwork)
+hist_fn <- function(x, xlab, xname){
+   #ggplotly(  
+  ggplot() +
+  geom_histogram(aes(x), bins = 300) +
+    labs(x = xlab, y="Effectif", title = xname) +
+    theme_bw()
+#)
+}
+
+p1 <- hist_fn(data$`N_Fol (%)`, "N_Fol (%)", "Azote")
+p2 <- hist_fn(data$`P_Fol (%)`, "P_Fol (%)", "Phosphore")
+p3 <- hist_fn(data$`K_Fol (%)`, "K_Fol (%)", "Potassium")
+p4 <- hist_fn(data$`Mg_Fol (%)`, "Mg_Fol (%)", "Magnésium")
+p5 <- hist_fn(data$`Ca_Fol (%)`, "Ca_Fol (%)", "Calcium")
+p6 <- hist_fn(data$`Cu_Fol (%)`, "Cu_Fol (%)", "Cuivre")
+p7 <- hist_fn(data$`B_Fol (%)`, "B_Fol (%)", "Bore")
+p8 <- hist_fn(data$`Fe_Fol (%)`, "Fe_Fol (%)", "Fer")
+p9 <- hist_fn(data$`Zn_Fol (%)`, "Zn_Fol (%)", "Zinc")
+p10 <- hist_fn(data$`Al_Fol (%)`, "Al_Fol (%)", "Aluminium")
+p11 <- hist_fn(data$`Mn_Fol (%)`, "Mn_Fol (%)", "Manganèse")
+
+p1 + p2
+p3 + p4
+p5 + p6
+p7 + p8
+p9 + p10
+p11
+```
+
+#### Analyse de sol en ppm
+```{r echo=FALSE}
+k1 <- hist_fn(data$`Ca_Sol (ppm)`, "Ca_Fol (ppm)", "Calcium")
+k2 <- hist_fn(data$`P_Sol (ppm)`, "P_Fol (ppm)", "Phosphore")
+k3 <- hist_fn(data$`K_Sol (ppm)`, "K_Fol (ppm)", "Potassium")
+k4 <- hist_fn(data$`Mg_Sol (ppm)`, "Mg_Fol (ppm)", "Magnésium")
+k5 <- hist_fn(data$`Cu_Sol (ppm)`, "Cu_Fol (ppm)", "Cuivre")
+k6 <- hist_fn(data$`B_Sol (ppm)`, "B_Fol (ppm)", "Bore")
+k7 <- hist_fn(data$`Zn_Sol (ppm)`, "Zn_Fol (ppm)", "Zinc")
+k8 <- hist_fn(data$`Fe_Sol (ppm)`, "Fe_Fol (ppm)", "Fer")
+k9 <- hist_fn(data$`Al_Sol (ppm)`, "Al_Fol (ppm)", "Aluminium")
+k10 <- hist_fn(data$`Mn_Sol (ppm)`, "Mn_Fol (ppm)", "manganèse")
+
+k1 + k2
+k3 + k4
+k5 + k6
+k7 + k8
+k9 + k10
+```
+
+
+
