@@ -1,3 +1,3 @@
 # Fertilizers doses prediction of cranberries
 Software to predict the fertilizer dosage from foliar and soil tests and predict test in the following year   
-**Temporary link:** https://appferticanneberge.shinyapps.io/appCranberry/
+**Temporary link:** https://cranberrypredictionmodel.shinyapps.io/appGaussian2/
